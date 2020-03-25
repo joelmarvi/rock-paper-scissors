@@ -16,8 +16,7 @@ function play(e) {
     const playerChoice = e.target.id;
     const computerChoice = getComputerChoice();
     const winner = getWinner(playerChoice, computerChoice);
-
-    console.log(playerChoice, computerChoice, winner)
+    showWinner(winner, computerChoice);
 }
 
 //Get computers choice
@@ -57,5 +56,78 @@ function getWinner(p, c) {
     }
 }
 
+//Show winner
+function showWinner(winner, computerChoice) {
+    if(winner === 'player') {
+        //Increase player score
+        scoreboard.player++;
+        //Show modal result, notice back ticks
+        result.innerHTML = `
+            <h1 class="text-win">You Win!</h1>
+            <i class="far fa-hand-${computerChoice} fa-10x"></i>
+            <p>Computer Chose <strong>${computerChoice.charAt(0).toUpperCase() + computerChoice.slice(1)}</strong></p>
+        `;
+    } else if(winner === 'computer') {
+        //Increase computer score
+        scoreboard.computer++;
+        //Show modal result, notice back ticks
+        result.innerHTML = `
+            <h1 class="text-lose">You Lose!</h1>
+            <i class="far fa-hand-${computerChoice} fa-10x"></i>
+            <p>Computer Chose <strong>${computerChoice.charAt(0).toUpperCase() + computerChoice.slice(1)}</strong></p>
+        `;
+    } else {
+         //Show modal result, notice back ticks
+         result.innerHTML = `
+         <h1>It's a Draw!</h1>
+         <i class="far fa-hand-${computerChoice} fa-10x"></i>
+         <p>Computer Chose <strong>${computerChoice.charAt(0).toUpperCase() + computerChoice.slice(1)}</strong></p>
+        `;
+    }
+    //Show score
+    score.innerHTML = `
+        <p>Player: ${scoreboard.player}</p>
+        <p>Computer: ${scoreboard.computer}</p>
+    `;
+
+    //Finish game
+    if(scoreboard.player === 5 || scoreboard.computer === 5) {
+        if(scoreboard.player > scoreboard.computer) {
+            result.innerHTML = `
+            <h1 class="text-win">Game Over! <br> You Win!</h1>
+        `;
+        } else {
+            result.innerHTML = `
+            <h1 class="text-lose">Game Over! <br> You Lose!</h1>
+        `;
+        }
+       
+    }
+
+    modal.style.display = 'block';
+}
+
+//Restart game
+function restartGame() {
+    //Reset the score in JS
+    scoreboard.player = 0;
+    scoreboard.computer = 0;
+    //Reset score in the DOM 
+    score.innerHTML = `
+        <p>Player: 0</p>
+        <p>Computer: 0</p>
+    `;
+    restart.style.display = 'none';
+}
+
+//Clear modal
+function clearModal(e) {
+    if(e.target == modal) {
+        modal.style.display = 'none';
+    }
+}
+
 //Event listeners
 choices.forEach(choice => choice.addEventListener('click',play));
+window.addEventListener('click', clearModal);
+restart.addEventListener('click', restartGame);
